@@ -1,0 +1,18 @@
+# .koyeb.yaml
+
+name: rsshub-twitter
+
+build:
+  dockerfile: ./Dockerfile
+  args:
+    PUPPETEER_SKIP_DOWNLOAD: "0"
+
+env:
+  NODE_ENV: production
+  TZ: Asia/Shanghai
+
+  # Twitter 登录信息（可选，但强烈建议填写以提高稳定性）
+  TWITTER_USERNAME: your_twitter_username
+  TWITTER_PASSWORD: your_password
+  TWITTER_COOKIE: auth_token=xxxxx; ct0=xxxxx;
+  CHROMIUM_EXECUTABLE_PATH: /app/node_modules/.cache/puppeteer/chrome/linux-137.0.7151.119/chrome
