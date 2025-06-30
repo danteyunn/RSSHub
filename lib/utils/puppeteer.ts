@@ -18,11 +18,29 @@ const outPuppeteer = async (
         stealth?: boolean;
     } = {}
 ) => {
-    const options = {
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-infobars', '--window-position=0,0', '--ignore-certificate-errors', '--ignore-certificate-errors-spki-list', `--user-agent=${config.ua}`],
-        headless: true,
-        ignoreHTTPSErrors: true,
-    };
+const options = {
+    args: [
+        '--no-sandbox', 
+        '--disable-setuid-sandbox', 
+        '--disable-infobars', 
+        '--window-position=0,0', 
+        '--ignore-certificate-errors', 
+        '--ignore-certificate-errors-spki-list', 
+        `--user-agent=${config.ua}`,
+        // Koyeb 部署必需的参数
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--no-first-run',
+        '--disable-extensions',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding'
+    ],
+    headless: true, // 或者 'new'
+    ignoreHTTPSErrors: true,
+    // Koyeb 环境下的额外配置
+    executablePath: process.env.CHROMIUM_EXECUTABLE_PATH || '/usr/bin/chromium-browser'
+};
 
     let insidePuppeteer: PuppeteerExtra | typeof puppeteer = puppeteer;
     if (extraOptions.stealth) {
@@ -78,11 +96,29 @@ export const getPuppeteerPage = async (
         noGoto?: boolean;
     } = {}
 ) => {
-    const options = {
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-infobars', '--window-position=0,0', '--ignore-certificate-errors', '--ignore-certificate-errors-spki-list', `--user-agent=${config.ua}`],
-        headless: true,
-        ignoreHTTPSErrors: true,
-    };
+const options = {
+    args: [
+        '--no-sandbox', 
+        '--disable-setuid-sandbox', 
+        '--disable-infobars', 
+        '--window-position=0,0', 
+        '--ignore-certificate-errors', 
+        '--ignore-certificate-errors-spki-list', 
+        `--user-agent=${config.ua}`,
+        // Koyeb 部署必需的参数
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--no-first-run',
+        '--disable-extensions',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding'
+    ],
+    headless: true, // 或者 'new'
+    ignoreHTTPSErrors: true,
+    // Koyeb 环境下的额外配置
+    executablePath: process.env.CHROMIUM_EXECUTABLE_PATH || '/usr/bin/chromium-browser'
+};
 
     let insidePuppeteer: PuppeteerExtra | typeof puppeteer = puppeteer;
     insidePuppeteer = addExtra(puppeteer);
