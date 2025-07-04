@@ -1,0 +1,16 @@
+name: Koyeb Scheduled Redeploy
+
+on:
+  schedule:
+    - cron: '0 21 * * *'  # UTC时间每天21点 = 北京时间凌晨5点
+  workflow_dispatch:      # 允许手动触发
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Koyeb Deploy
+        run: |
+          curl -X POST "https://api.koyeb.com/v1/services/99824555-db5e-4ac9-9eba-1c1559cff748/deployments" \
+            -H "Authorization: Bearer 6khdc2x3rvihfe9oeelveiqmkoe6oa9nunokv3awyj8kb610soarfnw56mzo65us" \
+            -H "Content-Type: application/json"
