@@ -56,6 +56,9 @@ ARG TARGETPLATFORM
 ARG USE_CHINA_NPM_REGISTRY=0
 RUN \
     set -ex ; \
+    apt-get update && \
+    apt-get install -yq --no-install-recommends \
+        ca-certificates wget && \
     if [ "$TARGETPLATFORM" = 'linux/amd64' ]; then \
         if [ "$USE_CHINA_NPM_REGISTRY" = 1 ]; then \
             npm config set registry https://registry.npmmirror.com && \
@@ -64,12 +67,13 @@ RUN \
         fi; \
         echo 'Downloading Chromium...' && \
         corepack enable pnpm && \
-        pnpm --allow-build=rebrowser-puppeteer add rebrowser-puppeteer@$(cat /app/.puppeteer_version) --save-prod && \
+        pnpm add rebrowser-puppeteer@$(cat /app/.puppeteer_version) --save-prod && \
         pnpm rb && \
-        pnpx rebrowser-puppeteer browsers install chrome ; \
+        pnpx rebrowser-puppeteer browsers install chrome:stable ; \
     else \
         mkdir -p /app/node_modules/.cache/puppeteer ; \
-    fi;
+    fi; \
+    rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -88,15 +92,12 @@ RUN \
     apt-get update && \
     apt-get install -yq --no-install-recommends \
         dumb-init git curl \
+        ca-certificates fonts-liberation wget xdg-utils \
+        libasound2 libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 libcairo2 libcups2 libdbus-1-3 libdrm2 \
+        libexpat1 libgbm1 libglib2.0-0 libnspr4 libnss3 libpango-1.0-0 libx11-6 libxcb1 libxcomposite1 \
+        libxdamage1 libxext6 libxfixes3 libxkbcommon0 libxrandr2 \
     ; \
-    if [ "$TARGETPLATFORM" = 'linux/amd64' ]; then \
-        apt-get install -yq --no-install-recommends \
-            ca-certificates fonts-liberation wget xdg-utils \
-            libasound2 libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 libcairo2 libcups2 libdbus-1-3 libdrm2 \
-            libexpat1 libgbm1 libglib2.0-0 libnspr4 libnss3 libpango-1.0-0 libx11-6 libxcb1 libxcomposite1 \
-            libxdamage1 libxext6 libxfixes3 libxkbcommon0 libxrandr2 \
-        ; \
-    else \
+    if [ "$TARGETPLATFORM" != 'linux/amd64' ]; then \
         apt-get install -yq --no-install-recommends \
             chromium \
         && \
@@ -120,7 +121,6 @@ RUN \
 
 COPY --from=docker-minifier /app /app
 
-EXPOSE 1200
+EXPOSE 1200 
 ENTRYPOINT ["dumb-init", "--"]
-
 CMD ["npm", "run", "start"]
